@@ -1,8 +1,8 @@
-import afk.bot.london.LargeTank
+import afk.bot.london.SmallTank
 import java.util.Random
 import com.hackoeur.jglm.support.FastMath._
 
-class ScalaBot extends LargeTank {
+class ScalaBot extends SmallTank {
   var movement: Int = 0
   var rotation: Int = 0
   var action: () => Unit = move
@@ -21,17 +21,13 @@ class ScalaBot extends LargeTank {
     if (vis.length > 0) {
       var diff = abs(vis(0))
 
-      if (diff < 1)
-      {
+      if (diff < 1) {
         attack();
-      } else
-      {
-        if (vis(0) < 0)
-        {
+      } else {
+        if (vis(0) < 0) {
           turnAntiClockwise();
         }
-        else
-        {
+        else {
           turnClockwise();
         }
       }

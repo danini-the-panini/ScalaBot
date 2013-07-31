@@ -2,18 +2,18 @@ import afk.bot.london.SmallTank
 import java.util.Random
 import com.hackoeur.jglm.support.FastMath._
 
-class ScalaBot extends SmallTank {
-  var movement: Int = 0
-  var rotation: Int = 0
-  var action: () => Unit = move
-  var direction: () => Unit = turnClockwise
-  var rand: Random = new Random
+class ScalaBot() extends SmallTank {
+  var counter: Int = 0
+  val rand: Random = new Random
+  var action: () => Unit = if (rand.nextBoolean) move else turn
+  var direction: () => Unit = if (rand.nextBoolean) turnClockwise else turnAntiClockwise
+  var backwards: Boolean = false
   
   override def run() {
     if (events.hitWall) {
-      movement = 200
-      rotation = 180
-      action = turn
+      counter = 5
+      backwards = !backwards
+      action = move
     }
     
     var vis = events.getVisibleBots;
@@ -22,36 +22,39 @@ class ScalaBot extends SmallTank {
       var diff = abs(vis(0))
 
       if (diff < 1) {
-        attack();
+        attack()
       } else {
         if (vis(0) < 0) {
-          turnAntiClockwise();
+          turnAntiClockwise()
         }
         else {
-          turnClockwise();
+          turnClockwise()
         }
       }
-    } else action()
-  }
-  
-  def turn() {
-    if (rotation > 0) {
-      direction()
-      rotation = rotation-1
     } else {
-      rotation = rand nextInt 180
-      direction = if (rand.nextBoolean) turnClockwise else turnAntiClockwise
-      action = move;
+      action()
+      counter = counter - 1
     }
   }
 
   def move() {
-    if (movement > 0) {
-      moveForward()
-      movement = movement-1
+    if (counter > 0) {
+      if (backwards) moveBackwards() else moveForward()
     } else {
-      movement = rand nextInt 800
+      counter = rand nextInt 180
+      direction = if (rand.nextBoolean) turnClockwise else turnAntiClockwise
       action = turn
     }
   }
+
+  def turn() {
+    if (counter > 0) {
+      direction()
+    } else {
+      counter = rand nextInt 500
+      backwards = false;
+      action = move
+    }
+  }
+
 }
